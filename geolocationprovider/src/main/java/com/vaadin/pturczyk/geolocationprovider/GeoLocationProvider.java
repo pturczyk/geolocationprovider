@@ -25,12 +25,12 @@ public class GeoLocationProvider extends AbstractExtension {
 
 			@Override
 			public void onSuccess(GeoLocation location) {
-				fireEvent(new GeoLocationSuccessEvent(GeoLocationProvider.this));
+				fireEvent(new GeoLocationSuccessEvent(GeoLocationProvider.this, location));
 			}
 
 			@Override
 			public void onFailure(GeoLocationError error) {
-				fireEvent(new GeoLocationFailureEvent(GeoLocationProvider.this));
+				fireEvent(new GeoLocationFailureEvent(GeoLocationProvider.this, error));
 			}
 		});
 	}
@@ -60,17 +60,6 @@ public class GeoLocationProvider extends AbstractExtension {
 		addListener(GeoLocationFailureEvent.class, geoLocationListener, getListenerFailureMethod());
 	}
 
-	/**
-	 * Unregisters {@link GeoLocationEventListener} from the GeoLocation listeners
-	 * 
-	 * @param geoLocationListener
-	 *            to unregister.
-	 */
-	public void removeGeoLocationEventListener(GeoLocationEventListener geoLocationListener) {
-		removeListener(GeoLocationSuccessEvent.class, geoLocationListener);
-		removeListener(GeoLocationFailureEvent.class, geoLocationListener);
-	}
-	
 	private Method getListenerSuccessMethod() {
 		return getMethod("onSuccess", new Class[] { GeoLocationSuccessEvent.class });
 	}
@@ -93,6 +82,17 @@ public class GeoLocationProvider extends AbstractExtension {
 		return requestedMethod;
 	}
 
+	/**
+	 * Unregisters {@link GeoLocationEventListener} from the GeoLocation
+	 * listeners
+	 * 
+	 * @param geoLocationListener
+	 *            to unregister.
+	 */
+	public void removeGeoLocationEventListener(GeoLocationEventListener geoLocationListener) {
+		removeListener(GeoLocationSuccessEvent.class, geoLocationListener);
+		removeListener(GeoLocationFailureEvent.class, geoLocationListener);
+	}
 
 	/**
 	 * Listener for GeoLocation events
@@ -107,7 +107,7 @@ public class GeoLocationProvider extends AbstractExtension {
 		void onSuccess(GeoLocationSuccessEvent successEvent);
 
 		/**
-		 * Invoked on geolocation retrieval failure.
+		 * Invoked on failed geolocation retrieval.
 		 * 
 		 * @param failureEvent
 		 *            holds geolocation failure information
@@ -115,18 +115,45 @@ public class GeoLocationProvider extends AbstractExtension {
 		void onFailure(GeoLocationFailureEvent failureEvent);
 	}
 
-	public static class GeoLocationFailureEvent extends EventObject {
-
-		public GeoLocationFailureEvent(Object source) {
-			super(source);
-		}
-
-	}
-
+	/**
+	 * Represents a GeoLocation acquisition success event.
+	 * 
+	 * <p>
+	 * Invoke {@link #getLocation()} to obtain acquired GeoLocation
+	 * </p>
+	 */
 	public static class GeoLocationSuccessEvent extends EventObject {
 
-		public GeoLocationSuccessEvent(Object source) {
+		private final GeoLocation location;
+
+		public GeoLocationSuccessEvent(Object source, GeoLocation location) {
 			super(source);
+			this.location = location;
+		}
+
+		public GeoLocation getLocation() {
+			return location;
+		}
+	}
+
+	/**
+	 * Represents GeoLocation failure event.
+	 *
+	 * <p>
+	 * Use {@link #getError()} to obtain failure reason
+	 * </p>
+	 */
+	public static class GeoLocationFailureEvent extends EventObject {
+
+		private final GeoLocationError error;
+
+		public GeoLocationFailureEvent(Object source, GeoLocationError error) {
+			super(source);
+			this.error = error;
+		}
+
+		public GeoLocationError getError() {
+			return error;
 		}
 
 	}

@@ -23,7 +23,7 @@ import com.vaadin.shared.communication.ServerRpc;
 public class GeoLocationProviderTest {
 
 	private static final GeoLocationError GEOLOCATION_ERROR = GeoLocationError.POSITION_UNAVAILABLE;
-	private static final GeoLocation GEOLOCATION = new GeoLocation(0.0, 0.0, 0.0);
+	private static final GeoLocation GEOLOCATION = new GeoLocation(53.4167, 14.5833, 10.0);
 	
 	@Test
 	public void shouldCallSuccessOnRegisteredListener() {
