@@ -1,5 +1,8 @@
-package com.vaadin.pturczyk.geolocationprovider.gwt.client;
+package com.vaadin.pturczyk.geolocationprovider;
 
+/**
+ * Represents the supported GeoLocation errors
+ */
 public enum GeoLocationError {
 	/** An unknown error occurred. */
 	UNKNOWN_ERROR(0),
@@ -23,6 +26,12 @@ public enum GeoLocationError {
 		return errorId;
 	}
 
+	/**
+	 * @param errorId
+	 *            to convert from
+	 * @return corresponding GeoLocationError or UNKNOWN_ERROR if unknown
+	 *         errorId
+	 */
 	public static GeoLocationError fromErrorId(int errorId) {
 		GeoLocationError result = UNKNOWN_ERROR;
 

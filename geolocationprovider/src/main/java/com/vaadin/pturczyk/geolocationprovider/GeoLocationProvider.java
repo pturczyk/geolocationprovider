@@ -1,10 +1,10 @@
 package com.vaadin.pturczyk.geolocationprovider;
 
 import java.lang.reflect.Method;
-import java.util.EventObject;
 
-import com.vaadin.pturczyk.geolocationprovider.gwt.client.GeoLocation;
-import com.vaadin.pturczyk.geolocationprovider.gwt.client.GeoLocationError;
+import com.vaadin.pturczyk.geolocationprovider.event.GeoLocationEventListener;
+import com.vaadin.pturczyk.geolocationprovider.event.GeoLocationFailureEvent;
+import com.vaadin.pturczyk.geolocationprovider.event.GeoLocationSuccessEvent;
 import com.vaadin.pturczyk.geolocationprovider.gwt.client.GeoLocationProviderClientRpc;
 import com.vaadin.pturczyk.geolocationprovider.gwt.client.GeoLocationProviderServerRpc;
 import com.vaadin.server.AbstractExtension;
@@ -16,6 +16,21 @@ import com.vaadin.server.AbstractExtension;
  * This extension is internally making use of the HTML5 geolocation feature
  * exposed via the GWT GeoLocation API
  * </p>
+ * 
+ * <pre>
+ * {@code
+ *   // Usage 
+ *   
+ *   // create geolocation provider
+ *   GeoLocationProvider provider = new GeoLocationProvider();
+ * 
+ *   // register listener
+ *   provider.addGeoLocationEventListener(new GeoLocationEventListener() {...});
+ * 
+ *   // request location
+ *   provider.requestGeoLocation();
+ * }
+ * </pre>
  */
 @SuppressWarnings("serial")
 public class GeoLocationProvider extends AbstractExtension {
@@ -24,13 +39,14 @@ public class GeoLocationProvider extends AbstractExtension {
 		registerRpc(new GeoLocationProviderServerRpc() {
 
 			@Override
-			public void onSuccess(GeoLocation location) {
-				fireEvent(new GeoLocationSuccessEvent(GeoLocationProvider.this, location));
+			public void onSuccess(double latitude, double longitude, double accuracy) {
+				fireEvent(new GeoLocationSuccessEvent(GeoLocationProvider.this, new GeoLocation(latitude, longitude,
+						accuracy)));
 			}
 
 			@Override
-			public void onFailure(GeoLocationError error) {
-				fireEvent(new GeoLocationFailureEvent(GeoLocationProvider.this, error));
+			public void onFailure(int errorId) {
+				fireEvent(new GeoLocationFailureEvent(GeoLocationProvider.this, GeoLocationError.fromErrorId(errorId)));
 			}
 		});
 	}
@@ -68,7 +84,7 @@ public class GeoLocationProvider extends AbstractExtension {
 		return getMethod("onFailure", new Class[] { GeoLocationFailureEvent.class });
 	}
 
-	private Method getMethod(String methodName, Class[] parameters) {
+	private Method getMethod(String methodName, Class<?>[] parameters) {
 		final Method requestedMethod;
 
 		try {
@@ -92,70 +108,6 @@ public class GeoLocationProvider extends AbstractExtension {
 	public void removeGeoLocationEventListener(GeoLocationEventListener geoLocationListener) {
 		removeListener(GeoLocationSuccessEvent.class, geoLocationListener);
 		removeListener(GeoLocationFailureEvent.class, geoLocationListener);
-	}
-
-	/**
-	 * Listener for GeoLocation events
-	 */
-	public interface GeoLocationEventListener {
-		/**
-		 * Invoked on successful geolocation retrieval
-		 * 
-		 * @param successEvent
-		 *            holds geolocation event information
-		 */
-		void onSuccess(GeoLocationSuccessEvent successEvent);
-
-		/**
-		 * Invoked on failed geolocation retrieval.
-		 * 
-		 * @param failureEvent
-		 *            holds geolocation failure information
-		 */
-		void onFailure(GeoLocationFailureEvent failureEvent);
-	}
-
-	/**
-	 * Represents a GeoLocation acquisition success event.
-	 * 
-	 * <p>
-	 * Invoke {@link #getLocation()} to obtain acquired GeoLocation
-	 * </p>
-	 */
-	public static class GeoLocationSuccessEvent extends EventObject {
-
-		private final GeoLocation location;
-
-		public GeoLocationSuccessEvent(Object source, GeoLocation location) {
-			super(source);
-			this.location = location;
-		}
-
-		public GeoLocation getLocation() {
-			return location;
-		}
-	}
-
-	/**
-	 * Represents GeoLocation failure event.
-	 *
-	 * <p>
-	 * Use {@link #getError()} to obtain failure reason
-	 * </p>
-	 */
-	public static class GeoLocationFailureEvent extends EventObject {
-
-		private final GeoLocationError error;
-
-		public GeoLocationFailureEvent(Object source, GeoLocationError error) {
-			super(source);
-			this.error = error;
-		}
-
-		public GeoLocationError getError() {
-			return error;
-		}
-
 	}
 
 }
