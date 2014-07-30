@@ -32,11 +32,14 @@ import com.vaadin.server.AbstractExtension;
  * }
  * </pre>
  */
-@SuppressWarnings("serial")
 public class GeoLocationProvider extends AbstractExtension {
+
+	private static final long serialVersionUID = 4124855957131429090L;
 
 	public GeoLocationProvider() {
 		registerRpc(new GeoLocationProviderServerRpc() {
+
+			private static final long serialVersionUID = -8896383685859888835L;
 
 			@Override
 			public void onSuccess(double latitude, double longitude, double accuracy) {
