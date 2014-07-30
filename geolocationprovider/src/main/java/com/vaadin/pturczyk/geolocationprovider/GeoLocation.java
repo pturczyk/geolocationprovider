@@ -1,5 +1,7 @@
 package com.vaadin.pturczyk.geolocationprovider;
 
+import static java.lang.Double.doubleToLongBits;
+
 import java.io.Serializable;
 
 /**
@@ -45,31 +47,32 @@ public class GeoLocation implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		long temp;
-		temp = Double.doubleToLongBits(accuracy);
+		temp = doubleToLongBits(accuracy);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(latitude);
+		temp = doubleToLongBits(latitude);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(longitude);
+		temp = doubleToLongBits(longitude);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		GeoLocation other = (GeoLocation) obj;
-		if (Double.doubleToLongBits(accuracy) != Double.doubleToLongBits(other.accuracy))
-			return false;
-		if (Double.doubleToLongBits(latitude) != Double.doubleToLongBits(other.latitude))
-			return false;
-		if (Double.doubleToLongBits(longitude) != Double.doubleToLongBits(other.longitude))
-			return false;
-		return true;
+		boolean result = false;
+
+		if (this == obj) { 
+			result = true;
+		} 
+		
+		if (obj != null && getClass() == obj.getClass()) {
+			GeoLocation other = (GeoLocation) obj;
+			
+			result = doubleToLongBits(accuracy) == doubleToLongBits(other.accuracy)
+					&& doubleToLongBits(latitude) == doubleToLongBits(other.latitude)
+					&& doubleToLongBits(longitude) == doubleToLongBits(other.longitude);
+		}
+
+		return result;
 	}
 
 	@Override
