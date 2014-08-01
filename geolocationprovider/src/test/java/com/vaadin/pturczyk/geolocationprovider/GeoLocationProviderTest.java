@@ -19,6 +19,7 @@ import com.vaadin.pturczyk.geolocationprovider.gwt.client.GeoLocationProviderCli
 import com.vaadin.pturczyk.geolocationprovider.gwt.client.GeoLocationProviderServerRpc;
 import com.vaadin.shared.communication.ClientRpc;
 import com.vaadin.shared.communication.ServerRpc;
+import com.vaadin.ui.UI;
 
 public class GeoLocationProviderTest {
 
@@ -34,6 +35,8 @@ public class GeoLocationProviderTest {
 		GeoLocationProvider geoLocationProvider = new GeoLocationProviderWithRpcClientStub(true);
 		GeoLocationEventListener geoLocationListenerMock = mock(GeoLocationEventListener.class);
 		geoLocationProvider.addGeoLocationEventListener(geoLocationListenerMock);
+
+		UI.setCurrent(mock(UI.class));
 
 		// when
 		geoLocationProvider.requestGeoLocation();
@@ -51,6 +54,8 @@ public class GeoLocationProviderTest {
 		GeoLocationEventListener geoLocationListenerMock = mock(GeoLocationEventListener.class);
 		geoLocationProvider.addGeoLocationEventListener(geoLocationListenerMock);
 
+		UI.setCurrent(mock(UI.class));
+
 		// when
 		geoLocationProvider.requestGeoLocation();
 
@@ -65,6 +70,8 @@ public class GeoLocationProviderTest {
 		// given
 		GeoLocationProvider geoLocationProvider = new GeoLocationProviderWithRpcClientStub(true);
 		GeoLocationEventListener geoLocationListenerMock = mock(GeoLocationEventListener.class);
+
+		UI.setCurrent(mock(UI.class));
 
 		geoLocationProvider.addGeoLocationEventListener(geoLocationListenerMock);
 		geoLocationProvider.removeGeoLocationEventListener(geoLocationListenerMock);

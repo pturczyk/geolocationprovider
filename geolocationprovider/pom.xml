@@ -81,25 +81,12 @@
 			<version>1.8.4</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>com.github.branflake2267</groupId> -->
-		<!-- <artifactId>gwt-maps-api</artifactId> -->
-		<!-- <version>3.10.0-alpha-7</version> -->
-		<!-- <exclusions> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>com.google.gwt</groupId> -->
-		<!-- <artifactId>gwt-user</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>com.google.gwt</groupId> -->
-		<!-- <artifactId>gwt-servlet</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>com.google.gwt</groupId> -->
-		<!-- <artifactId>gwt-dev</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- </exclusions> -->
-		<!-- </dependency> -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 
@@ -111,8 +98,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.0</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 
@@ -148,6 +135,9 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<finalName>${artifactId}</finalName>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -162,6 +152,9 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<finalName>${artifactId}</finalName>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -169,6 +162,7 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.2.1</version>
 				<configuration>
+					<finalName>${artifactId}</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
 					<descriptors>
 						<descriptor>assembly/assembly.xml</descriptor>
@@ -183,20 +177,40 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.14.1</version>
 			</plugin>
+
+			<plugin>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-maven-plugin</artifactId>
+				<version>${vaadin.plugin.version}</version>
+				<configuration>
+					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+					<webappDirectory>${project.build.outputDirectory}/VAADIN/widgetsets</webappDirectory>
+					<persistentunitcachedir>${project.build.directory}</persistentunitcachedir>
+					<deploy>${project.build.directory}/gwt-deploy</deploy>
+					<compileReport>false</compileReport>
+					<noServer>true</noServer>
+					<draftCompile>false</draftCompile>
+					<style>OBF</style>
+					<strict>true</strict>
+					<runTarget>http://localhost:8080/</runTarget>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>resources</goal>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/java</directory>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-		</resources>
 
 	</build>
 

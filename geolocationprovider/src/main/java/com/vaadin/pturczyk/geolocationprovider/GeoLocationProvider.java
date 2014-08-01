@@ -8,6 +8,7 @@ import com.vaadin.pturczyk.geolocationprovider.event.GeoLocationSuccessEvent;
 import com.vaadin.pturczyk.geolocationprovider.gwt.client.GeoLocationProviderClientRpc;
 import com.vaadin.pturczyk.geolocationprovider.gwt.client.GeoLocationProviderServerRpc;
 import com.vaadin.server.AbstractExtension;
+import com.vaadin.ui.UI;
 
 /**
  * Provides geolocation information.
@@ -58,13 +59,14 @@ public class GeoLocationProvider extends AbstractExtension {
 	 * Requests geolocation asynchronously. The result will be returned via the
 	 * registered listeners.
 	 * 
-	 * @param geoLocationListener
-	 *            to call with result.
-	 * 
 	 * @see #addGeoLocationEventListener(GeoLocationEventListener)
 	 * @see #removeGeoLocationEventListener(GeoLocationEventListener)
 	 */
 	public void requestGeoLocation() {
+		boolean isExtensionAlreadyAdded = UI.getCurrent().getExtensions().contains(this); 
+		if(!isExtensionAlreadyAdded) {
+			extend(UI.getCurrent());
+		}
 		getRpcProxy(GeoLocationProviderClientRpc.class).requestGeoLocation();
 	}
 
